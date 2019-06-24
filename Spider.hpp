@@ -2,21 +2,24 @@
 #define SPIDER_H
 
 #include "Deck.hpp"
+#include "Table.hpp"
 #include <vector>
+#include <stack>
 
 class Spider {
 private:
-    size_t size;
     Deck deck;
+    Table table;
+    size_t completed;
 public:
-    Spider(){
-        size = 0;
-    }
-    size_t getSize() { return size; }
-
-    void print_deck(){
-        deck.print_deck();
-    }
+    Spider();
+    ~Spider();
 };
+
+Spider::Spider() : deck(2, 8), table(deck){
+}
+
+Spider::~Spider(){
+}
 
 #endif
