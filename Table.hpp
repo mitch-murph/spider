@@ -17,6 +17,7 @@ public:
     Table(Deck &deck);
     void build_table();
     void stock_table();
+    void make_move(int , int);
     void print_table();
 };
 
@@ -54,9 +55,20 @@ void Table::stock_table(){
     }
 }
 
+void Table::make_move(int pile1, int pile2){
+    auto col1 = table[pile1]->top();
+    auto col2 = table[pile2]->top();
+    if (col2->can_merge(col1)){
+        col2->merge(col1);
+        table[pile1]->pop();
+    }
+}
+
 void Table::print_table(){
     for (int i = 0; i < 10; i++){
+        std::cout << i << "-> ";
         table[i]->print_pile();
+        std::cout << std::endl;
     }
 }
 

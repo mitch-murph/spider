@@ -13,6 +13,7 @@ public:
     void push(Collection * collection);
     std::vector<Collection *> * get_collections();
     Collection * top();
+    void pop();
     void print_pile();
 };
 
@@ -36,12 +37,16 @@ std::vector<Collection *> * Pile::get_collections(){
     return  &collections;
 }
 
+void Pile::pop(){
+    collections.pop_back();
+    top()->make_visible();
+}
+
 void Pile::print_pile(){
     for (auto collection : collections){
         collection->print_collection();
         std::cout << ";";
     }
-    std::cout << std::endl;
 }
 
 #endif

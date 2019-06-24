@@ -9,7 +9,11 @@ int main (){
     //deck.print_deck();
     Table table(deck);
     table.print_table();
-    table.stock_table();
-    std::cout << "============================================================" << std::endl;
-    table.print_table();
+    while (1){
+        std::cout << "============================================================" << std::endl;
+        int x, y;
+        std::cin >> x >> y;
+        table.make_move(x, y);
+        table.print_table();
+    }
 }

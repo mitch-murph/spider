@@ -16,6 +16,7 @@ public:
     void push(Card * card);
     bool can_merge(Collection * other);
     void merge(Collection * other);
+    void make_visible();
     std::vector<Card* > * get_cards();
     void print_collection();
 };
@@ -31,13 +32,17 @@ void Collection::push(Card * card){
 }
 
 bool Collection::can_merge(Collection * other){
-    return (this->cards[this->cards.size()-1]->rank - 1 == other->cards[other->cards.size()-1]->rank);
+    return (this->cards[this->cards.size()-1]->rank - 1 == other->cards[0]->rank);
 }
 
 void Collection::merge(Collection * other){
     for (auto card : other->cards){
         this->cards.push_back(card);
     }
+}
+
+void Collection::make_visible(){
+    visible = true;
 }
 
 std::vector<Card *> * Collection::get_cards(){
