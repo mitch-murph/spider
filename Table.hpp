@@ -42,7 +42,16 @@ void Table::build_table(){
 }
 
 void Table::stock_table(){
-    
+    for (auto pile : table){
+        Collection * collection = new Collection(true);
+        (*collection).push(deck.deal());
+        if (pile->top()->can_merge(collection)){
+            pile->top()->merge(collection);
+        }
+        else {
+            (*pile).push(collection);
+        }
+    }
 }
 
 void Table::print_table(){

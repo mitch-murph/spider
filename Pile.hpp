@@ -12,6 +12,7 @@ public:
     ~Pile();
     void push(Collection * collection);
     std::vector<Collection *> * get_collections();
+    Collection * top();
     void print_pile();
 };
 
@@ -27,6 +28,10 @@ void Pile::push(Collection * collection){
     collections.push_back(collection);
 }
 
+Collection * Pile::top(){
+    return collections[collections.size()-1];
+}
+
 std::vector<Collection *> * Pile::get_collections(){
     return  &collections;
 }
@@ -34,6 +39,7 @@ std::vector<Collection *> * Pile::get_collections(){
 void Pile::print_pile(){
     for (auto collection : collections){
         collection->print_collection();
+        std::cout << ";";
     }
     std::cout << std::endl;
 }

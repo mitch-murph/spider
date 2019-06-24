@@ -9,4 +9,7 @@ int main (){
     //deck.print_deck();
     Table table(deck);
     table.print_table();
+    table.stock_table();
+    std::cout << "============================================================" << std::endl;
+    table.print_table();
 }
