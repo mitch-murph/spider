@@ -9,21 +9,26 @@
 
 class Deck {
 private:
-    size_t suit_count;
-    size_t set_count;
     std::vector<Card *> deck_of_cards;
 public:
-    Deck(size_t suit_count, size_t set_count);
+    Deck();
+    Deck(size_t, size_t);
     ~Deck();
-    void build_deck();
+    void build_deck(size_t, size_t);
+    void swap(int, int);
     void shuffle_deck();
     Card * deal();
     std::vector<Card *> deal(int n);
     void print_deck();
 };
 
-Deck::Deck(size_t suit_count, size_t set_count) : suit_count(suit_count), set_count(set_count) {
-    build_deck();
+Deck::Deck() {
+    build_deck(4, 4);
+    shuffle_deck();
+}
+
+Deck::Deck(size_t suit_count, size_t set_count) {
+    build_deck(suit_count, set_count);
     shuffle_deck();
 }
 
@@ -33,27 +38,29 @@ Deck::~Deck(){
     }
 }
 
-void Deck::build_deck(){
+void Deck::build_deck(size_t suit_count, size_t set_count){
     for (size_t i = 0; i < suit_count; i++){
         for (size_t k = 0; k < set_count/suit_count; k++) {
             for (size_t j = 0; j < 13; j++) {
-                Card *temp = new Card;
-                temp->suit = i;
-                temp->rank = j;
-                deck_of_cards.push_back(temp);
+                deck_of_cards.push_back(
+                    new Card(j, i)
+                );
             }
         }
     }
 }
 
+void Deck::swap(int x, int y){
+    Card * temp = deck_of_cards[x];
+    deck_of_cards[x] = deck_of_cards[y];
+    deck_of_cards[y] = temp;
+}
+
 void Deck::shuffle_deck(){
-    srand(time(NULL));
-    
+    srand(time(NULL));    
     for (int i = 0; i < deck_of_cards.size(); i++){
         int random_index = rand() % deck_of_cards.size();
-        Card * temp = deck_of_cards[i];
-        deck_of_cards[i] = deck_of_cards[random_index];
-        deck_of_cards[random_index] = temp;
+        swap(random_index, i);
     }
 }
 
@@ -66,16 +73,15 @@ Card * Deck::deal(){
 std::vector<Card *> Deck::deal(int n){
     std::vector<Card *> cards;
     for (int i = 0 ; i < n; i++){
-        Card * card = deck_of_cards.back();
+        cards.push_back(deck_of_cards.back());
         deck_of_cards.pop_back();
-        cards.push_back(card);
     }
     return cards;
 }
 
 void Deck::print_deck(){
     for (int i = 0; i < deck_of_cards.size(); i++){
-        std::cout << deck_of_cards[i]->rank << ", " <<  deck_of_cards[i]->suit  << std::endl;
+        std::cout << deck_of_cards[i]->get_rank() << ", " <<  deck_of_cards[i]->get_suit()  << std::endl;
     }
 }
 

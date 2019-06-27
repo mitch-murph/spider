@@ -14,7 +14,10 @@ public:
     Collection(bool);
     ~Collection();
     void push(Card * card);
+    bool consecutive(Collection *);
+    bool same_suit(Collection *);
     bool can_merge(Collection * other);
+    bool can_rest(Collection * other);
     void merge(Collection * other);
     void make_visible();
     std::vector<Card* > * get_cards();
@@ -31,8 +34,20 @@ void Collection::push(Card * card){
     cards.push_back(card);
 }
 
+bool Collection::consecutive(Collection * other){
+    return ((*this->cards[this->cards.size()-1]).get_rank() - 1 == (*other->cards[0]).get_rank());
+}
+
+bool Collection::same_suit(Collection * other){
+    return ((*this->cards[this->cards.size()-1]).get_suit() == (*other->cards[0]).get_suit());
+}
+
 bool Collection::can_merge(Collection * other){
-    return (this->cards[this->cards.size()-1]->rank - 1 == other->cards[0]->rank);
+    return consecutive(other) && same_suit(other);
+}
+
+bool Collection::can_rest(Collection * other){
+    return consecutive(other);
 }
 
 void Collection::merge(Collection * other){
@@ -52,10 +67,9 @@ std::vector<Card *> * Collection::get_cards(){
 void Collection::print_collection(){
     for (auto card : cards){
         if (visible)
-            std::cout << card->suit << ", " << card->rank << "\t";
+            std::cout << card->get_suit() << ", " << card->get_rank() << "\t";
         else
             std::cout << "*" << ", " << "**" << "\t";
-
     }
 }
 

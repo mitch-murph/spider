@@ -16,7 +16,8 @@ public:
     ~Spider();
 };
 
-Spider::Spider() : deck(2, 8), table(deck){
+Spider::Spider() {
+    completed = 0;
 }
 
 Spider::~Spider(){
