@@ -9,7 +9,10 @@
 int main (){
     Table table;
     for (auto a : table){
-        a->print_pile();
-        std::cout<< std::endl;
+        for (auto b : *a){
+            for (auto c : *b){
+                std::cout << c->get_rank() << std::endl;
+            }
+        }
     }
 }

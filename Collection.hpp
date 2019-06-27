@@ -2,6 +2,7 @@
 #define COLLECTION_H
 
 #include "Card.hpp"
+#include "Iterator.hpp"
 #include <vector>
 #include <iostream>
 
@@ -22,6 +23,9 @@ public:
     void make_visible();
     std::vector<Card* > * get_cards();
     void print_collection();
+
+    Iterator<Card> begin();
+    Iterator<Card> end();
 };
 
 Collection::Collection(bool visible) : visible(visible) {
@@ -71,6 +75,13 @@ void Collection::print_collection(){
         else
             std::cout << "*" << ", " << "**" << "\t";
     }
+}
+
+Iterator<Card> Collection::begin() {
+	return Iterator<Card>(*get_cards(), 0); 
+}
+Iterator<Card> Collection::end() {
+	return Iterator<Card>(*get_cards(), cards.size()); 
 }
 
 #endif
