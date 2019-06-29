@@ -5,14 +5,10 @@
 #include "Table.hpp"
 // #include "Deck.hpp"
 #include "Card.hpp"
+#include "Spider.hpp"
 
 int main (){
-    Table table;
-    for (auto a : table){
-        for (auto b : *a){
-            for (auto c : *b){
-                std::cout << c->get_rank() << std::endl;
-            }
-        }
-    }
+    Spider spider(1200, 800);
+    spider.run();
+    return 0;
 }

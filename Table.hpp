@@ -17,73 +17,83 @@ private:
     std::vector<Pile*> piles;
     Deck deck;
     size_t completed;
+    size_t stock;
 public:
     Table();
+    ~Table();
     void build_table();
     void stock_table();
-    void make_move(int , int);
-    void print_table();
-    std::vector<Pile*>* get_piles();
+    bool move(int , int);
+    Pile* get(int);
+    Collection* get(int, int);
+    Card* get(int, int, int);
 
     Iterator<Pile> begin();
     Iterator<Pile> end();
 };
 
-Table::Table() : deck(2, 8){
+Table::Table() : deck(1, 8){
     completed = 0;
+    stock = 0;
     build_table();
+}
+Table::~Table(){
+    for (auto pile : piles){
+        delete pile;
+    }
 }
 void Table::build_table(){
     for (int i = 0; i < 10; i++){
-        Pile *pile = new Pile();
-        size_t amount = 3;
-        if (i < 4) amount = 4;
-        for (int j = 0; j < amount; j++){
-            Collection * collection = new Collection(false);
-            (*collection).push(deck.deal());
-            (*pile).push(collection);
-        }
-        Collection * collection = new Collection(true);
-        (*collection).push(deck.deal());
-        (*pile).push(collection);
-        piles.push_back(pile);
+        piles.push_back(new Pile());
+    }
+    for (int i = 0; i < 54; i++){
+        Collection * collection = new Collection();
+        if (i >= 44) collection->make_visible();
+        collection->push(deck.deal());
+        get(i%10)->push(collection);
     }
 }
 void Table::stock_table(){
     for (auto pile : piles){
-        Collection * collection = new Collection(true);
-        (*collection).push(deck.deal());
+        Collection * collection = new Collection();
+        collection->make_visible();
+        collection->push(deck.deal());
         if (pile->top()->can_merge(collection)){
             pile->top()->merge(collection);
         }
         else {
-            (*pile).push(collection);
+            pile->push(collection);
         }
     }
 }
-void Table::make_move(int pile1, int pile2){
-    auto col1 = piles[pile1]->top();
-    auto col2 = piles[pile2]->top();
-    if (col2->can_merge(col1)){
-        col2->merge(col1);
-        piles[pile1]->pop();
+bool Table::move(int pile1, int pile2){
+    if (pile1 != pile2){
+        auto collection1 = piles[pile1]->top();
+        auto collection2 = piles[pile2]->top();
+        if (collection2->can_merge(collection1)){
+            collection2->merge(collection1);
+            piles[pile1]->pop();
+            piles[pile1]->top()->make_visible();
+            return true;
+        }
     }
+    return false;
 }
-void Table::print_table(){
-    for (int i = 0; i < 10; i++){
-        std::cout << i << "----->\t";
-        piles[i]->print_pile();
-        std::cout << std::endl;
-    }
+Pile* Table::get(int i){
+    return piles[i];
 }
-std::vector<Pile*>* Table::get_piles(){
-    return &piles;
+Collection* Table::get(int i, int j){
+    return get(i)->get(j);
 }
+Card* Table::get(int i, int j, int k){
+    return get(i, j)->get(k);
+}
+
 Iterator<Pile> Table::begin() {
-	return Iterator<Pile>(*get_piles(), 0); 
+	return Iterator<Pile>(piles, 0); 
 }
 Iterator<Pile> Table::end() {
-	return Iterator<Pile>(*get_piles(), piles.size()); 
+	return Iterator<Pile>(piles, piles.size()); 
 }
 
 #endif

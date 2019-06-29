@@ -3,51 +3,63 @@
 
 #include <vector>
 #include "Collection.hpp"
+#include "Stack.hpp"
 #include "Iterator.hpp"
 
-class Pile{
+class Pile : public Stack<Collection> {
 private:
-    std::vector<Collection *> collections;
+    std::vector<Collection *>& collections;
 public:
     Pile();
     ~Pile();
-    void push(Collection * collection);
-    std::vector<Collection *> * get_collections();
-    Collection * top();
-    void pop();
-    void print_pile();
+
+    Collection * second();
+    bool can_merge(Collection*);
+    bool split(int, int);
+    void unsplit();
 
     Iterator<Collection> begin();
     Iterator<Collection> end();
 };
 
-Pile::Pile(){}
-Pile::~Pile(){}
-void Pile::push(Collection * collection){
-    collections.push_back(collection);
+Pile::Pile() : collections(v) {
+
 }
-Collection * Pile::top(){
-    return collections[collections.size()-1];
-}
-std::vector<Collection *> * Pile::get_collections(){
-    return  &collections;
-}
-void Pile::pop(){
-    collections.pop_back();
-    top()->make_visible();
-}
-void Pile::print_pile(){
+Pile::~Pile(){
     for (auto collection : collections){
-        collection->print_collection();
-        std::cout << ";";
+        delete collection;
+    }
+}
+Collection * Pile::second(){
+    return collections[size()-2];
+}
+bool Pile::can_merge(Collection * other){
+    return top()->can_merge(other);
+}
+bool Pile::split(int j, int k){
+    Collection* temp = get(j)->split(k);
+    if (!temp->empty()){
+        push(temp);
+        return true;
+    }
+    return false;
+}
+void Pile::unsplit(){
+    if (size() > 1){
+        if (second()->is_visible() && second()->can_merge(top())){
+            Collection * temp = top();
+            temp->make_visible();
+            pop();
+            top()->merge(temp);
+        }
     }
 }
 
 Iterator<Collection> Pile::begin() {
-	return Iterator<Collection>(*get_collections(), 0); 
+	return Iterator<Collection>(collections, 0); 
 }
 Iterator<Collection> Pile::end() {
-	return Iterator<Collection>(*get_collections(), collections.size()); 
+	return Iterator<Collection>(collections, size()); 
 }
 
 #endif
