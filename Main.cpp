@@ -2,10 +2,7 @@
 #include <vector>
 #include <utility>
 
-#include "Table.hpp"
-// #include "Deck.hpp"
-#include "Card.hpp"
-#include "Spider.hpp"
+#include "src/Spider.hpp"
 
 int main (){
     Spider spider(1200, 800);

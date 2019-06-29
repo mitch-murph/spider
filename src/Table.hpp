@@ -5,7 +5,7 @@
 #include "Collection.hpp"
 #include "Deck.hpp"
 #include "Pile.hpp"
-#include "Iterator.hpp"
+#include "../util/Iterator.hpp"
 #include <vector>
 #include <stack>
 #include <iostream>

@@ -3,8 +3,8 @@
 
 #include <vector>
 #include "Collection.hpp"
-#include "Stack.hpp"
-#include "Iterator.hpp"
+#include "../util/Stack.hpp"
+#include "../util/Iterator.hpp"
 
 class Pile : public Stack<Collection> {
 private:

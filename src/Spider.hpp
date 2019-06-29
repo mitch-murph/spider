@@ -173,7 +173,7 @@ void render_card(sf::RenderWindow *window_ptr, int x, int y, bool visible = fals
     if (visible){
         sf::Text text;
         sf::Font font;
-        font.loadFromFile("arial.ttf");
+        font.loadFromFile("util/arial.ttf");
         text.setFont(font);
         text.setString(std::to_string(suit) + "\t" + std::to_string(rank));
         text.setPosition(x, y);

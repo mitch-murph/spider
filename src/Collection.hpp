@@ -2,8 +2,8 @@
 #define COLLECTION_H
 
 #include "Card.hpp"
-#include "Iterator.hpp"
-#include "Stack.hpp"
+#include "../util/Iterator.hpp"
+#include "../util/Stack.hpp"
 #include <vector>
 #include <stack>
 #include <iostream>
