@@ -1,7 +1,3 @@
-#include <iostream>
-#include <vector>
-#include <utility>
-
 #include "src/Spider.hpp"
 
 int main (){

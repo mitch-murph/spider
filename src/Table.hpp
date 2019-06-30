@@ -7,8 +7,6 @@
 #include "Pile.hpp"
 #include "../util/Iterator.hpp"
 #include <vector>
-#include <stack>
-#include <iostream>
 
 class Table;
 

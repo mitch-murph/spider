@@ -5,8 +5,6 @@
 #include "../util/Iterator.hpp"
 #include "../util/Stack.hpp"
 #include <vector>
-#include <stack>
-#include <iostream>
 
 class Collection : public Stack<Card> {
 private:
@@ -72,7 +70,7 @@ void Collection::make_visible(){
 Collection* Collection::split(int k){
     Collection* collection = new Collection();
     collection->make_visible();
-    std::stack<Card* > temp;
+    Stack<Card> temp;
     for (int i = cards.size()-1; i > (size() - k - 1); i--){
         temp.push(top());
         pop();

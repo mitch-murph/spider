@@ -3,9 +3,6 @@
 
 #include "Deck.hpp"
 #include "Table.hpp"
-#include <string>
-#include <vector>
-#include <stack>
 #include <SFML/Graphics.hpp>
 
 class Spider {
@@ -71,7 +68,7 @@ void convert_click(int mouse_x, int mouse_y, Table &table, int card_width, int c
         card_pos[i] = -1;
     size_t c_table = 0, c_pile = 0, c_collection = 0, overall = 0;
     for (auto pile : table){
-        int cx = (card_width + 10)*c_table +(card_width/5);
+        int cx = (card_width + 10)*c_table +(card_width/2);
         if (pile->empty()){
             int cy = (card_height/5);
             if (cx < mouse_x && cx + 100 > mouse_x &&
@@ -196,7 +193,7 @@ void Spider::render_cards(){
             for (auto card : *collection){
                 if (!((current[0] == c_table) && (current[1] == c_pile) && picked_up)){
                     render_card(window_ptr, 
-                                (card_width + 10)*c_table +(card_width/5),
+                                (card_width + 10)*c_table +(card_width/2),
                                 (card_height/3)*(overall) +(card_height/5), 
                                 collection->is_visible(),
                                 card->get_rank(), card->get_suit());
@@ -217,7 +214,7 @@ void Spider::render_spaces(){
     int i = 0;
     for (auto pile : table){
         render_card(window_ptr,
-                        (card_width + 10)*i +(card_width/5),
+                        (card_width + 10)*i +(card_width/2),
                         (card_height/5));
         i++;
     }

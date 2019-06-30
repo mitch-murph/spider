@@ -3,7 +3,6 @@
 
 #include "Card.hpp"
 #include <vector>
-#include <iostream>
 #include <stdlib.h>
 #include <time.h>
 
