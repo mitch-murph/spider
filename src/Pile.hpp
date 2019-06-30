@@ -15,6 +15,7 @@ public:
 
     Collection * second();
     bool can_merge(Collection*);
+    void check();
     bool split(int, int);
     void unsplit();
 
@@ -37,6 +38,14 @@ bool Pile::can_merge(Collection * other){
     if (size() > 0)
         return top()->can_merge(other);
     return true;
+}
+void Pile::check(){
+    if (size() > 0){
+        if (top()->front()->get_rank() == 12 && top()->top()->get_rank() == 0){
+            pop();
+            if (size() > 0) top()->make_visible(); 
+        }
+    }
 }
 bool Pile::split(int j, int k){
     if (top() == get(j)){

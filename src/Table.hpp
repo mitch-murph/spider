@@ -24,7 +24,6 @@ public:
     void build();
     void stock();
     bool move(int , int);
-    void check();
     Pile* get(int);
     Collection* get(int, int);
     Card* get(int, int, int);
@@ -33,7 +32,7 @@ public:
     Iterator<Pile> end();
 };
 
-Table::Table() : deck(1, 4){
+Table::Table() : deck(2, 8){
     completed = 0;
     stock_count = 5;
     build();
@@ -67,34 +66,26 @@ void Table::stock(){
         }
     }
 }
-bool Table::move(int pile1, int pile2){
+bool Table::move(int p1, int p2){
+    Pile* pile1 = get(p1);
+    Pile* pile2 = get(p2);
     if (pile1 != pile2){
-        if (get(pile2)->empty()){
-            Collection* temp = new Collection();
-            temp->make_visible();
-            get(pile2)->push(temp);
-        }
-        auto collection1 = get(pile1)->top();
-        auto collection2 = get(pile2)->top();
-        if (collection2->can_merge(collection1)){
+        if (pile2->empty()) 
+            pile2->push(new Collection(true));
+        Collection* collection1 = pile1->top();
+        Collection* collection2 = pile2->top();
+        if (!(collection2->can_merge(collection1) || collection2->can_rest(collection1)))
+            return false;
+        else if (collection2->can_merge(collection1))
             collection2->merge(collection1);
-            get(pile1)->pop();
-            if (!get(pile1)->empty())
-                get(pile1)->top()->make_visible();
-            return true;
-        }
+        else if (collection2->can_rest(collection1))
+            pile2->push(collection1);
+        pile1->pop();
+        if (!pile1->empty())
+            pile1->top()->make_visible();    
+        return true; 
     }
     return false;
-}
-void Table::check(){
-    for (auto pile : *this){
-        if (pile->size() > 0){
-            if (pile->top()->front()->get_rank() == 12 && pile->top()->top()->get_rank() == 0){
-                pile->pop();
-                if (pile->size() > 0) pile->top()->make_visible(); 
-            }
-        }
-    }
 }
 Pile* Table::get(int i){
     return piles[i];

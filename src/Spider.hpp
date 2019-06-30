@@ -49,7 +49,7 @@ Spider::Spider(int w, int h) {
     picked_up = false;
 }
 Spider::~Spider(){
-
+    //delete table;
 }
 void Spider::init(){
     window_ptr = new sf::RenderWindow(sf::VideoMode(width, height), "Spider");
@@ -60,7 +60,7 @@ void Spider::loop(){
         poll();
         update();
         if (is_running){
-            window_ptr->clear(sf::Color::White);
+            window_ptr->clear(sf::Color(34, 100, 34));
             render();
             window_ptr->display();
         }
@@ -108,11 +108,6 @@ void Spider::poll(){
         if (event.type == sf::Event::MouseButtonPressed) mousePress(event);
         if (event.type == sf::Event::MouseButtonReleased) mouseRelease(event);
 
-
-
-        if (event.type == sf::Event::KeyPressed) {
-            table.stock();
-        }
         if (event.type == sf::Event::MouseMoved){
             m[0] = event.mouseMove.x;
             m[1] = event.mouseMove.y;
@@ -124,7 +119,6 @@ void Spider::mousePress(sf::Event event){
     if (current[0] != -1 && current[1] != -1 && current[2] != -1){
         picked_up = true;
         if (table.get(current[0])->split(current[1], current[2])){
-            std::cout << "Split" << std::endl;
             current[1]++;
         }
     }
@@ -158,38 +152,42 @@ void Spider::update(){
         if (!table.get(0)->empty())
             if (!(table.get(current[0])->size() - 1 == current[1])) picked_up = false;
     }
-    table.check();
+    for (auto pile : table){
+        pile->check();
+    }
 }
 void render_card(sf::RenderWindow *window_ptr, int x, int y, bool visible = false, int rank = -1, int suit = -1){
     sf::RectangleShape shape(sf::Vector2f(100,150));
-    shape.setFillColor(sf::Color::Green);
-    if (rank == -1 && suit == -1) shape.setFillColor(sf::Color::White);
+    shape.setOutlineColor(sf::Color::White);
+    shape.setFillColor(sf::Color(0,0,139)); 
+    if (rank == -1 && suit == -1){
+        shape.setOutlineColor(sf::Color::Red);
+        shape.setFillColor(sf::Color::Transparent); 
+    }
     shape.setPosition(x, y);
-    shape.setOutlineColor(sf::Color::Red);
-    shape.setOutlineThickness(1);
-    window_ptr->draw(shape);
-
-        // sf::Text text;
-        // sf::Font font;
-        // font.loadFromFile("arial.ttf");
-        // text.setFont(font);
-        // text.setString(std::to_string(suit) + "\t" + std::to_string(rank));
-        // text.setPosition(x, y);
-        // text.setCharacterSize(24);
-        // text.setFillColor(sf::Color::Blue);
-        // window_ptr->draw(text);
-
+    shape.setOutlineThickness(3);
     if (visible){
+        shape.setFillColor(sf::Color::White);
+        shape.setOutlineColor(sf::Color::Red);
+        if (suit == 0) shape.setOutlineColor(sf::Color::Black);
+        window_ptr->draw(shape);
+
         sf::Text text;
         sf::Font font;
         font.loadFromFile("util/arial.ttf");
         text.setFont(font);
-        text.setString(std::to_string(suit) + "\t" + std::to_string(rank));
+        text.setString(std::to_string(rank));
         text.setPosition(x, y);
         text.setCharacterSize(24);
         text.setFillColor(sf::Color::Red);
+        if (suit == 0)
+            text.setFillColor(sf::Color::Black);
         window_ptr->draw(text);
     }
+    else {
+        window_ptr->draw(shape);
+    }
+    
 }
 void Spider::render_cards(){
     size_t c_table = 0, c_pile = 0, c_collection = 0, overall = 0;

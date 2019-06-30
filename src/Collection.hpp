@@ -15,6 +15,7 @@ private:
     bool visible;
 public:
     Collection();
+    Collection(bool);
     ~Collection();
 
     Card* front();
@@ -32,6 +33,9 @@ public:
 };
 
 Collection::Collection() : visible(false), cards(v) {
+
+}
+Collection::Collection(bool visible) : visible(visible), cards(v) {
 
 }
 Collection::~Collection(){
