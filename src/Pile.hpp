@@ -34,13 +34,17 @@ Collection * Pile::second(){
     return collections[size()-2];
 }
 bool Pile::can_merge(Collection * other){
-    return top()->can_merge(other);
+    if (size() > 0)
+        return top()->can_merge(other);
+    return true;
 }
 bool Pile::split(int j, int k){
-    Collection* temp = get(j)->split(k);
-    if (!temp->empty()){
-        push(temp);
-        return true;
+    if (top() == get(j)){
+        Collection* temp = get(j)->split(k);
+        if (!temp->empty()){
+            push(temp);
+            return true;
+        }
     }
     return false;
 }

@@ -17,6 +17,7 @@ public:
     Collection();
     ~Collection();
 
+    Card* front();
     bool consecutive(Collection*);
     bool same_suit(Collection*);
     bool can_merge(Collection*);
@@ -38,14 +39,17 @@ Collection::~Collection(){
         delete card;
     }
 }
+Card* Collection::front(){
+    return get(0);
+}
 bool Collection::consecutive(Collection* other){
-    return ((*this->cards[this->cards.size()-1]).get_rank() - 1 == (*other->cards[0]).get_rank());
+    return get(size()-1)->get_rank() - 1 == other->get(0)->get_rank();
 }
 bool Collection::same_suit(Collection* other){
-    return ((*this->cards[this->cards.size()-1]).get_suit() == (*other->cards[0]).get_suit());
+    return get(size()-1)->get_suit() == other->get(0)->get_suit();
 }
 bool Collection::can_merge(Collection* other){
-    return consecutive(other) && same_suit(other);
+    return empty() || (consecutive(other) && same_suit(other));
 }
 bool Collection::can_rest(Collection* other){
     return consecutive(other);
@@ -63,7 +67,8 @@ void Collection::make_visible(){
 }
 Collection* Collection::split(int k){
     Collection* collection = new Collection();
-    std::stack<Card *> temp;
+    collection->make_visible();
+    std::stack<Card* > temp;
     for (int i = cards.size()-1; i > (size() - k - 1); i--){
         temp.push(top());
         pop();

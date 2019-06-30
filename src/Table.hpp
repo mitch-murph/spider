@@ -17,13 +17,14 @@ private:
     std::vector<Pile*> piles;
     Deck deck;
     size_t completed;
-    size_t stock;
+    size_t stock_count;
 public:
     Table();
     ~Table();
-    void build_table();
-    void stock_table();
+    void build();
+    void stock();
     bool move(int , int);
+    void check();
     Pile* get(int);
     Collection* get(int, int);
     Card* get(int, int, int);
@@ -32,28 +33,28 @@ public:
     Iterator<Pile> end();
 };
 
-Table::Table() : deck(1, 8){
+Table::Table() : deck(1, 4){
     completed = 0;
-    stock = 0;
-    build_table();
+    stock_count = 5;
+    build();
 }
 Table::~Table(){
     for (auto pile : piles){
         delete pile;
     }
 }
-void Table::build_table(){
+void Table::build(){
     for (int i = 0; i < 10; i++){
         piles.push_back(new Pile());
     }
-    for (int i = 0; i < 54; i++){
+    for (int i = 0; i < 44; i++){
         Collection * collection = new Collection();
-        if (i >= 44) collection->make_visible();
+        if (i >= 34) collection->make_visible();
         collection->push(deck.deal());
         get(i%10)->push(collection);
     }
 }
-void Table::stock_table(){
+void Table::stock(){
     for (auto pile : piles){
         Collection * collection = new Collection();
         collection->make_visible();
@@ -68,16 +69,32 @@ void Table::stock_table(){
 }
 bool Table::move(int pile1, int pile2){
     if (pile1 != pile2){
-        auto collection1 = piles[pile1]->top();
-        auto collection2 = piles[pile2]->top();
+        if (get(pile2)->empty()){
+            Collection* temp = new Collection();
+            temp->make_visible();
+            get(pile2)->push(temp);
+        }
+        auto collection1 = get(pile1)->top();
+        auto collection2 = get(pile2)->top();
         if (collection2->can_merge(collection1)){
             collection2->merge(collection1);
-            piles[pile1]->pop();
-            piles[pile1]->top()->make_visible();
+            get(pile1)->pop();
+            if (!get(pile1)->empty())
+                get(pile1)->top()->make_visible();
             return true;
         }
     }
     return false;
+}
+void Table::check(){
+    for (auto pile : *this){
+        if (pile->size() > 0){
+            if (pile->top()->front()->get_rank() == 12 && pile->top()->top()->get_rank() == 0){
+                pile->pop();
+                if (pile->size() > 0) pile->top()->make_visible(); 
+            }
+        }
+    }
 }
 Pile* Table::get(int i){
     return piles[i];

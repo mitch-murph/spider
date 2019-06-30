@@ -52,7 +52,7 @@ Spider::~Spider(){
 
 }
 void Spider::init(){
-    window_ptr = new sf::RenderWindow(sf::VideoMode(width, height), "SFML");
+    window_ptr = new sf::RenderWindow(sf::VideoMode(width, height), "Spider");
     is_running = true;
 }
 void Spider::loop(){
@@ -72,6 +72,15 @@ void convert_click(int mouse_x, int mouse_y, Table &table, int card_width, int c
     size_t c_table = 0, c_pile = 0, c_collection = 0, overall = 0;
     for (auto pile : table){
         int cx = (card_width + 10)*c_table +(card_width/5);
+        if (pile->empty()){
+            int cy = (card_height/5);
+            if (cx < mouse_x && cx + 100 > mouse_x &&
+                    cy < mouse_y && cy + 150 > mouse_y){
+                card_pos[0] = c_table;
+                card_pos[1] = c_pile;
+                card_pos[2] = c_collection;
+            }
+        }
         for (auto collection : *pile){
             for (auto card : *collection){
                 int cy = (card_height/3)*(overall) +(card_height/5);
@@ -102,9 +111,7 @@ void Spider::poll(){
 
 
         if (event.type == sf::Event::KeyPressed) {
-            int card_pos[3];
-            convert_click(m[0], m[1], table, card_width, card_height, card_pos);
-            std::cout << card_pos [0] << "," << card_pos[1] << "," <<  card_pos[2] << " " << table.get(card_pos[0], card_pos[1])->is_visible() << std::endl;
+            table.stock();
         }
         if (event.type == sf::Event::MouseMoved){
             m[0] = event.mouseMove.x;
@@ -117,6 +124,7 @@ void Spider::mousePress(sf::Event event){
     if (current[0] != -1 && current[1] != -1 && current[2] != -1){
         picked_up = true;
         if (table.get(current[0])->split(current[1], current[2])){
+            std::cout << "Split" << std::endl;
             current[1]++;
         }
     }
@@ -150,6 +158,7 @@ void Spider::update(){
         if (!table.get(0)->empty())
             if (!(table.get(current[0])->size() - 1 == current[1])) picked_up = false;
     }
+    table.check();
 }
 void render_card(sf::RenderWindow *window_ptr, int x, int y, bool visible = false, int rank = -1, int suit = -1){
     sf::RectangleShape shape(sf::Vector2f(100,150));

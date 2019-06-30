@@ -6,8 +6,8 @@
 template <typename T>
 class Stack {
 protected:
-public:
     std::vector<T* > v;
+public:
     void push(T*);
     void pop();
     bool empty();

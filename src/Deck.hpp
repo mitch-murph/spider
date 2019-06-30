@@ -14,27 +14,27 @@ public:
     Deck();
     Deck(size_t, size_t);
     ~Deck();
-    void build_deck(size_t, size_t);
+    void build(size_t, size_t);
     void swap(int, int);
-    void shuffle_deck();
+    void shuffle();
     Card * deal();
     std::vector<Card *> deal(int n);
 };
 
 Deck::Deck() {
-    build_deck(4, 4);
-    shuffle_deck();
+    build(4, 4);
+    shuffle();
 }
 Deck::Deck(size_t suit_count, size_t set_count) {
-    build_deck(suit_count, set_count);
-    shuffle_deck();
+    build(suit_count, set_count);
+    shuffle();
 }
 Deck::~Deck(){
     for (int i = 0; i < deck_of_cards.size(); i++){
         delete deck_of_cards[i];
     }
 }
-void Deck::build_deck(size_t suit_count, size_t set_count){
+void Deck::build(size_t suit_count, size_t set_count){
     for (size_t i = 0; i < suit_count; i++){
         for (size_t k = 0; k < set_count/suit_count; k++) {
             for (size_t j = 0; j < 13; j++) {
@@ -50,7 +50,7 @@ void Deck::swap(int x, int y){
     deck_of_cards[x] = deck_of_cards[y];
     deck_of_cards[y] = temp;
 }
-void Deck::shuffle_deck(){
+void Deck::shuffle(){
     srand(time(NULL));    
     for (int i = 0; i < deck_of_cards.size(); i++){
         int random_index = rand() % deck_of_cards.size();
