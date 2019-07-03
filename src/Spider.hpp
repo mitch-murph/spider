@@ -5,6 +5,9 @@
 #include "Table.hpp"
 #include <SFML/Graphics.hpp>
 
+void render_card(sf::RenderWindow *window_ptr, int x, int y, bool visible = false, int rank = -1, int suit = -1);
+bool is_within(int card, int mouse, int delta);
+
 class Spider {
 private:
     sf::RenderWindow *window_ptr;
@@ -73,7 +76,6 @@ void Spider::poll(){
         if (event.type == sf::Event::Closed) close();
         if (event.type == sf::Event::MouseButtonPressed) mousePress(event);
         if (event.type == sf::Event::MouseButtonReleased) mouseRelease(event);
-
         if (event.type == sf::Event::MouseMoved){
             mouse[0] = event.mouseMove.x;
             mouse[1] = event.mouseMove.y;
@@ -95,11 +97,16 @@ void Spider::run(){
 }
 void Spider::update(){
     if (picked_up){
-        if (!table.get(0)->empty())
-            if (!(table.get(current[0])->size() - 1 == current[1])) picked_up = false;
+        if (!table.get(current[0])->empty()){
+            if (!(table.get(current[0])->size() - 1 == current[1])) {
+                picked_up = false;
+            }
+        }
     }
     for (auto pile : table){
-        pile->check();
+        if (pile->check()){
+            table.completed();
+        }
     }
 }
 void Spider::render(){
@@ -107,6 +114,16 @@ void Spider::render(){
     render_cards();
     if (picked_up) {
         render_picked(table.get(current[0], current[1]));
+    }
+    for (int i = 0; i < table.get_stock_count(); i++){
+        int card_x = (card_width + 10)*(9) +(card_width/2)-(card_width/5)*i;
+        int card_y = height - 5*card_height/4;
+        render_card(window_ptr, card_x, card_y, false, 0, 0);
+    }
+    for (int i = 0; i < table.get_completed_count(); i++){
+        int card_x = (card_width/2) + (card_width/5)*i;
+        int card_y = height - 5*card_height/4;
+        render_card(window_ptr, card_x, card_y, true, 0, 0);
     }
 }
 void Spider::mousePress(sf::Event event){
@@ -116,6 +133,12 @@ void Spider::mousePress(sf::Event event){
         if (table.get(current[0])->split(current[1], current[2])){
             current[1]++;
         }
+    }
+    int card_x = (card_width + 10)*(9) +(card_width/2)-(card_width/5)*(table.get_stock_count()-1);
+    int delta = card_width + (card_width/5)*(table.get_stock_count()-1);
+    int card_y = height - 5*card_height/4;
+    if (is_within(card_x, event.mouseButton.x, delta) && is_within(card_y, event.mouseButton.y, card_height)){
+        table.stock();
     }
 }
 void Spider::mouseRelease(sf::Event event){
@@ -129,8 +152,8 @@ void Spider::mouseRelease(sf::Event event){
         picked_up = false;
     }
 }
-bool is_within(int card, int mouse, int width){
-    return (card < mouse && card + width > mouse);
+bool is_within(int card, int mouse, int delta){
+    return (card < mouse && card + delta > mouse);
 }
 void Spider::convert_click(int mouse_x, int mouse_y){
     for (int i = 0; i < 3; i++) current[i] = -1;
@@ -159,7 +182,7 @@ void Spider::convert_click_row(int mouse_x, int mouse_y, int i, Pile* pile){
         for (auto collection : *pile){
             int k = 0;
             for (auto card : *collection){
-                int card_y = (card_height/3)*(overall) +(card_height/5);
+                int card_y = (card_height/4)*(overall) +(card_height/5);
                 if (is_within(card_y, mouse_y, card_height)){
                     convert_store(i, j, k);
                 }
@@ -207,7 +230,7 @@ void draw_text(sf::RenderWindow *window_ptr, int x, int y, int rank, int suit){
         text.setFillColor(sf::Color::Black);
     window_ptr->draw(text);
 }
-void render_card(sf::RenderWindow *window_ptr, int x, int y, bool visible = false, int rank = -1, int suit = -1){
+void render_card(sf::RenderWindow *window_ptr, int x, int y, bool visible, int rank, int suit){
     draw_rect(window_ptr, x, y, visible, rank, suit);
     if (visible){
         draw_text(window_ptr, x, y, rank, suit);
@@ -219,11 +242,9 @@ void Spider::render_cards(){
         for (auto collection : *pile){
             for (auto card : *collection){
                 if (!((current[0] == i) && (current[1] == j) && picked_up)){
-                    render_card(window_ptr, 
-                                (card_width + 10)*i +(card_width/2),
-                                (card_height/3)*(overall) +(card_height/5), 
-                                collection->is_visible(),
-                                card->get_rank(), card->get_suit());
+                    int card_x = (card_width + 10)*i +(card_width/2);
+                    int card_y = (card_height/4)*(overall) +(card_height/4);
+                    render_card(window_ptr, card_x, card_y, collection->is_visible(), card->get_rank(), card->get_suit());
                 }
                 k++;
                 overall++;
@@ -239,19 +260,20 @@ void Spider::render_cards(){
 void Spider::render_spaces(){
     int i = 0;
     for (auto pile : table){
-        render_card(window_ptr,
-                        (card_width + 10)*i +(card_width/2),
-                        (card_height/5));
+        int card_x = (card_width + card_width/10)*i +(card_width/2);
+        int card_y = card_height/4;
+        render_card(window_ptr, card_x, card_y);
         i++;
     }
 }
 void Spider::render_picked(Collection * collection){
     int i = 0;
     for (auto card : *collection){
-        int x = mouse[0]-card_width/2;
-        int y = (i*card_height/3) + mouse[1]-card_height/2;
-        render_card(window_ptr, x, y, true, card->get_rank(), card->get_suit());
+        int card_x = mouse[0]-card_width/2;
+        int card_y = (i*card_height/4) + mouse[1]-card_height/6;
+        render_card(window_ptr, card_x, card_y, true, card->get_rank(), card->get_suit());
         i++;
     }
 }
+
 #endif

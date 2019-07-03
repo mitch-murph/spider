@@ -14,7 +14,7 @@ class Table {
 private:
     std::vector<Pile*> piles;
     Deck deck;
-    size_t completed;
+    size_t completed_count;
     size_t stock_count;
 public:
     Table();
@@ -25,13 +25,16 @@ public:
     Pile* get(int);
     Collection* get(int, int);
     Card* get(int, int, int);
+    int get_stock_count();
+    int get_completed_count();
+    void completed();
 
     Iterator<Pile> begin();
     Iterator<Pile> end();
 };
 
 Table::Table() : deck(2, 8){
-    completed = 0;
+    completed_count = 0;
     stock_count = 5;
     build();
 }
@@ -44,24 +47,27 @@ void Table::build(){
     for (int i = 0; i < 10; i++){
         piles.push_back(new Pile());
     }
-    for (int i = 0; i < 44; i++){
+    for (int i = 0; i < 54; i++){
         Collection * collection = new Collection();
-        if (i >= 34) collection->make_visible();
+        if (i >= 44) collection->make_visible();
         collection->push(deck.deal());
         get(i%10)->push(collection);
     }
 }
 void Table::stock(){
-    for (auto pile : piles){
-        Collection * collection = new Collection();
-        collection->make_visible();
-        collection->push(deck.deal());
-        if (pile->top()->can_merge(collection)){
-            pile->top()->merge(collection);
+    if (stock_count > 0){
+        for (auto pile : piles){
+            Collection * collection = new Collection();
+            collection->make_visible();
+            collection->push(deck.deal());
+            if (!pile->empty() && (pile->top()->can_merge(collection))){
+                pile->top()->merge(collection);
+            }
+            else {
+                pile->push(collection);
+            }
         }
-        else {
-            pile->push(collection);
-        }
+        stock_count--;
     }
 }
 bool Table::move(int p1, int p2){
@@ -93,6 +99,15 @@ Collection* Table::get(int i, int j){
 }
 Card* Table::get(int i, int j, int k){
     return get(i, j)->get(k);
+}
+int Table::get_stock_count(){
+    return stock_count;
+}
+int Table::get_completed_count(){
+    return completed_count;
+}
+void Table::completed(){
+    completed_count++;
 }
 
 Iterator<Pile> Table::begin() {

@@ -50,7 +50,7 @@ template <class T> T* Iterator<T>::operator*() const {
     return (*ptr)[position];
 } 
 template <class T> T* Iterator<T>::operator->() const {
-    return (*ptr)[position];
+    return *(*ptr)[position];
 }
 
 #endif
