@@ -7,7 +7,6 @@ SFML is required
 Build & Run
 
 ```
-Make
+make
 ./spider
-
 ```
