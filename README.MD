@@ -1,15 +1,13 @@
 # Spider
 
-To run/build Main.cpp `g++ -c Main.cpp -o main.o`
+SFML is required
 
-Then compile `main.o` with flags `-lsfml-graphics -lsfml-window -lsfml-system`
+`sudo apt-get install libsfml-dev`
 
-i.e. `g++ main.o -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system`
+Build & Run
 
-Then run `./sfml-app`
+```
+Make
+./spider
 
-## Easy way
-
-Use this single command
-
-`g++ -c Main.cpp -o main.o && g++ main.o -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system && ./sfml-app`
+```
